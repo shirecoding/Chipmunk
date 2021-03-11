@@ -1,5 +1,12 @@
 from django.shortcuts import render
+from .models import Account, Position
+from django_pandas.io import read_frame
 
-# Create your views here.
+
 def home(request):
-	return render(request, 'positions/home.html', {})
+
+    positions = Position.objects.all()
+
+    df = read_frame(positions)
+    
+    return render(request, 'positions/home.html', {'pandas_html': df.to_html()})

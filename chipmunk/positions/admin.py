@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Account, Position
 
-# Register your models here.
+admin.site.register(Account)
+admin.site.register(Position)
