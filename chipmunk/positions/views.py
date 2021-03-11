@@ -1,7 +1,14 @@
-from django.shortcuts import render
+from django.forms import ModelForm
+from django.shortcuts import redirect, render
 from django_pandas.io import read_frame
 
 from .models import Account, Position
+
+
+class PositionForm(ModelForm):
+    class Meta:
+        model = Position
+        fields = ["name", "symbol", "account", "shares", "cost_basis"]
 
 
 def home(request):
@@ -22,3 +29,17 @@ def home(request):
             "accounts_df": accounts_df.to_html(index=False),
         },
     )
+
+
+def position(request):
+    if request.method == "POST":
+        form = PositionForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+
+            Position.objects.create(**data).save()
+
+            return redirect("/positions")
+    else:
+        form = PositionForm()
+        return render(request, "forms/position.html", {"form": form})
