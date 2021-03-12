@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
 <h1>Positions</h1>
 
 {{ positions_df | safe }}
@@ -5,3 +9,5 @@
 <h1>Accounts</h1>
 
 {{ accounts_df | safe }}
+
+{% endblock %}
