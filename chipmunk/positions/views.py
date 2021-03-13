@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.forms import ModelForm
 from django.shortcuts import redirect, render
 from django_pandas.io import read_frame
@@ -11,6 +12,7 @@ class PositionForm(ModelForm):
         fields = ["name", "symbol", "account", "shares", "cost_basis"]
 
 
+@login_required(login_url="login")
 def home(request):
 
     positions = Position.objects.all()
@@ -31,6 +33,7 @@ def home(request):
     )
 
 
+@login_required(login_url="login")
 def position(request):
     if request.method == "POST":
         form = PositionForm(request.POST)
@@ -42,4 +45,4 @@ def position(request):
             return redirect("/positions")
     else:
         form = PositionForm()
-        return render(request, "forms/position.html", {"form": form})
+        return render(request, "positions/position.html", {"form": form})
