@@ -1,0 +1,12 @@
+[
+  {
+    "model": "api.Share",
+    "pk": 0,
+    "fields": {
+      "name": "USD",
+      "description": "US Dollar",
+      "price": 1,
+      "unit": 0
+    }
+  }
+]
