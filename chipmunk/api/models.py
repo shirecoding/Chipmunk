@@ -1,21 +1,73 @@
-from django.contrib.auth.models import User
 from django.db import models
 from rest_framework import routers, serializers, viewsets
 
+
+def ModelSerializerFactory(model):
+
+    return type(
+        f"{model.__name__}Serializer",
+        (serializers.ModelSerializer,),
+        {"Meta": type("Meta", (object,), {"model": model, "fields": "__all__"})},
+    )
+
+
+def ModelViewSetFactory(model, serializer):
+
+    return type(
+        f"{model.__name__}ViewSet",
+        (viewsets.ModelViewSet,),
+        {"queryset": model.objects.all(), "serializer_class": serializer},
+    )
+
+
 ################################################################################################
-## User
+## Share
+################################################################################################
+
+UNITS = [
+    ("SGD", "Singapore Dollar"),
+    ("USD", "US Dollar"),
+    ("BTC", "Bitcoin"),
+    ("ETH", "Ethereum"),
+]
+
+
+class Share(models.Model):
+    """Share"""
+
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+    price = models.FloatField(default=0.0)
+    unit = models.ForeignKey("Share", on_delete=models.CASCADE)
+
+
+################################################################################################
+## Asset
 ################################################################################################
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = "__all__"
+class Asset(models.Model):
+    """Assest"""
+
+    name = models.CharField(max_length=100)
+    share = models.ForeignKey(Share, on_delete=models.CASCADE)
+    num_shares = models.FloatField(default=0.0)
+    notes = models.TextField()
+
+    def __str__(self):
+        return self.name
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class StockAsset(Asset):
+    """Stock Asset"""
+
+    brokerage = models.CharField(max_length=100)
+
+
+class CashAsset(Asset):
+    """Cash Asset"""
+
+    bank = models.CharField(max_length=100)
 
 
 ################################################################################################
@@ -40,17 +92,6 @@ class Account(models.Model):
         return self.name
 
 
-class AccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Account
-        fields = "__all__"
-
-
-class AccountViewSet(viewsets.ModelViewSet):
-    queryset = Account.objects.all()
-    serializer_class = AccountSerializer
-
-
 ################################################################################################
 ## Position
 ################################################################################################
@@ -67,14 +108,3 @@ class Position(models.Model):
 
     def __str__(self):
         return self.symbol
-
-
-class PositionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Position
-        fields = "__all__"
-
-
-class PositionViewSet(viewsets.ModelViewSet):
-    queryset = Position.objects.all()
-    serializer_class = PositionSerializer
