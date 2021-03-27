@@ -1,5 +1,0 @@
-pandas
-numpy
-django
-django-pandas
-django-allauth

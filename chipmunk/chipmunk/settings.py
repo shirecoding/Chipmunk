@@ -37,16 +37,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # optional
-    "django.contrib.sites",
     # 3rd party
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
+    "rest_framework",
     # local
-    "home",
-    "positions",
-    "analysis",
+    "chipmunk",
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -129,25 +124,12 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-# Authentication (using 3rd party allauth)
+# Django REST Framework
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
-AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
-    "django.contrib.auth.backends.ModelBackend",
-    # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
-)
-
-SITE_ID = 1
-
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
-ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_UNIQUE_EMAIL = True
-
-LOGIN_REDIRECT_URL = "/"
-ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ]
+}
